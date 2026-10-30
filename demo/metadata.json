@@ -1,0 +1,6 @@
+{
+  "name": "SOL-Triad-Engine",
+  "description": "SOL-Triad-Engine v0.4.0: Universal Structural Coherence Verification Kernel and Agent Integration Layer for SOURCE, CONSTRAINT, and DISSIPATE primitives.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

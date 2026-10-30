@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sol-triad.org/schemas/v0.4.0/sol_triad_response.schema.json",
+  "title": "SolTriadEvaluationResponse",
+  "description": "JSON protocol 0.4.0 response schema produced by SOL-Triad Engine package v0.4.1.",
+  "type": "object",
+  "required": [
+    "request_id",
+    "protocol_version",
+    "engine_version",
+    "verdict",
+    "pairwise_checks",
+    "diagnostics",
+    "simulated_values",
+    "simulated_flags",
+    "evaluation_timestamp"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "description": "Echoed unique request identifier matching the input request_id."
+    },
+    "protocol_version": {
+      "type": "string",
+      "description": "Protocol version used for this interaction ('0.4.0')."
+    },
+    "engine_version": {
+      "type": "string",
+      "description": "Kernel package version that evaluated the request (for example, '0.4.1')."
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "REVIEW", "FAIL"],
+      "description": "Deterministic public arbitration outcome."
+    },
+    "pairwise_checks": {
+      "type": "object",
+      "required": ["P_SC", "P_CD", "P_SD"],
+      "properties": {
+        "P_SC": { "$ref": "#/$defs/PairwiseCheck" },
+        "P_CD": { "$ref": "#/$defs/PairwiseCheck" },
+        "P_SD": { "$ref": "#/$defs/PairwiseCheck" }
+      },
+      "additionalProperties": { "$ref": "#/$defs/PairwiseCheck" }
+    },
+    "diagnostics": {
+      "type": "array",
+      "description": "Granular diagnostics explaining every condition, warning, or failure code.",
+      "items": {
+        "type": "object",
+        "required": ["code", "severity", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "severity": {
+            "type": "string",
+            "enum": ["INFO", "WARNING", "ERROR"]
+          },
+          "message": { "type": "string" },
+          "primitive": {
+            "type": ["string", "null"]
+          },
+          "field_name": {
+            "type": ["string", "null"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "simulated_values": {
+      "type": "object",
+      "description": "Simulated terminal values after applying dissipation deltas and resource costs: S' = S0 + delta - cost.",
+      "additionalProperties": { "type": "number" }
+    },
+    "simulated_flags": {
+      "type": "object",
+      "description": "Simulated terminal boolean flags after applying flag deltas.",
+      "additionalProperties": { "type": "boolean" }
+    },
+    "evaluation_timestamp": {
+      "type": "number",
+      "description": "Deterministic UNIX timestamp (seconds) at which evaluation was performed."
+    },
+    "messages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Human-readable summary of diagnostic messages."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "PairwiseCheck": {
+      "type": "object",
+      "required": ["relationship", "is_valid", "verdict", "diagnostics"],
+      "properties": {
+        "relationship": { "type": "string" },
+        "is_valid": { "type": "boolean" },
+        "verdict": {
+          "type": "string",
+          "enum": ["PASS", "REVIEW", "FAIL"]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "severity", "message"],
+            "properties": {
+              "code": { "type": "string" },
+              "severity": {
+                "type": "string",
+                "enum": ["INFO", "WARNING", "ERROR"]
+              },
+              "message": { "type": "string" },
+              "primitive": { "type": ["string", "null"] },
+              "field_name": { "type": ["string", "null"] }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sol-triad.org/schemas/v0.4.0/sol_triad_request.schema.json",
+  "title": "SolTriadEvaluationRequest",
+  "description": "JSON protocol 0.4.0 request schema supported by SOL-Triad Engine package v0.4.1.",
+  "type": "object",
+  "required": [
+    "request_id",
+    "protocol_version",
+    "source",
+    "constraint",
+    "dissipate",
+    "initial_state"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this evaluation request (e.g., UUID or agent action ID)."
+    },
+    "protocol_version": {
+      "type": "string",
+      "enum": ["0.4.0"],
+      "description": "Integration protocol version."
+    },
+    "engine_version": {
+      "type": "string",
+      "description": "Target engine package version requested (optional, e.g. '0.4.1')."
+    },
+    "evaluation_context": {
+      "type": "object",
+      "description": "Optional arbitrary metadata regarding the agent, environment, or intent.",
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "description": "SOURCE (S) Primitive. Trusted hosts must supply the evidence and authority fields; do not let an agent mint registry records or privileges.",
+      "required": [
+        "evidence_id",
+        "authority_domain",
+        "granted_scope",
+        "granted_loss_domains",
+        "epistemic_type",
+        "timestamp_sec"
+      ],
+      "properties": {
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "authority_domain": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Authorized domains. null denotes structural defect; [] denotes zero privileges."
+        },
+        "granted_scope": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Target object scope. null denotes structural defect; [] denotes zero privileges."
+        },
+        "granted_loss_domains": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Permitted dissipation loss domains. null denotes structural defect; [] denotes zero privileges."
+        },
+        "epistemic_type": {
+          "type": "string",
+          "enum": ["FACT", "INFERENCE", "UNKNOWN"]
+        },
+        "timestamp_sec": { "type": "number" },
+        "max_age_sec": {
+          "type": "number",
+          "default": 300.0
+        },
+        "corroborating_evidence_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "payload_hash": {
+          "type": ["string", "null"],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "constraint": {
+      "type": "object",
+      "description": "CONSTRAINT (C) Primitive: Operational bounds, protected parameters, and invariants.",
+      "required": ["domain_scope", "target_objects", "protected_set"],
+      "properties": {
+        "domain_scope": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_objects": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "protected_set": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "protected_values": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "max_bounds": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "min_bounds": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "protected_flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbidden_flags": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "required_flags": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "dissipate": {
+      "type": "object",
+      "description": "DISSIPATE (D) Primitive: Proposed mutation, resource costs, side effects, and state deltas.",
+      "required": ["loss_domain", "target_states", "side_effects"],
+      "properties": {
+        "loss_domain": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_states": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "side_effects": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "resource_cost": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "state_delta": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "flag_delta": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "initial_state": {
+      "type": "object",
+      "description": "Observed state of the system before the proposed action is applied.",
+      "required": ["current_values"],
+      "properties": {
+        "current_values": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "active_flags": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" },
+          "default": {}
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "default": {}
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
